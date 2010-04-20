@@ -29,6 +29,7 @@ It works by invoking the capistrano command from a remote server using `screen`.
      "VERSION",
      "bin/captivate",
      "captivate-0.0.0.gem",
+     "captivate-0.0.1.gem",
      "captivate.gemspec",
      "lib/captivate.rb",
      "spec/acceptance_spec.rb",
