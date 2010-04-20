@@ -54,14 +54,14 @@ write sane tests and restructuring.
 
 ### TODO
 
-* Post-install hook: copy/symlink captivate executable somewhere like
-  `/usr/bin/local`
+* Better error messages when something fails
 * Add help and version command line options (`-h/--help` and `-v/--version`)
-* Write remote log using `tee`: `~/tmp > ls foo 2>&1 | tee logfile`
+* Write to remote log using `tee` (eg: `$ echo SOMETHING 2>&1 |tee logfile`)
 * Extra config YAML options:
   * `mailto: [email(s) to receive logile, comma separated]`
   * `prevent_noncaptivate_deploy: true`
 * Copy sample YAML to config/captivate.yml via `script/generate captivate`
+* Purge previous captivate working directories (older than 1 week?)
 
 ### Note on Patches/Pull Requests
 

@@ -161,14 +161,13 @@ module Captivate
   private
     
     def converted_template
-      template.gsub('### CAP COMMANDS ###', command).gsub('### CD REMOTE PATH ###', "cd #{remote_path}")
+      template.gsub('### CAP COMMANDS ###', command).gsub('### REMOTE PATH ###', remote_path)
     end
     
     def template
       <<-EOS
 #!/usr/bin/env bash
 # Deploys app. Executed remotely from deploy host.
-trap 'echo "-->  Aborted.  Press Enter to continue..."; read; exit' ERR
 if [ -f ~/.bashrc ]; then
   . ~/.bashrc
 fi
@@ -178,7 +177,8 @@ fi
 if [ -f ~/.bash_profile ]; then
   . ~/.bash_profile
 fi
-### CD REMOTE PATH ###
+trap 'echo "-->  Aborted.  Press Enter to continue..."; read; exit' ERR
+cd ### REMOTE PATH ###
 echo "-->  Executing:  "
 echo "cap ### CAP COMMANDS ###"
 cap ### CAP COMMANDS ###
