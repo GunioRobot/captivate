@@ -19,6 +19,11 @@ first copied to remote server via `scp`.
     cd path/to/my_app
     captivate deploy
 
+Multi-stage is supported:
+
+    cd path/to/my_app
+    captivate staging deploy:migrations TAG=v2.3-RC1
+
 Download and install
 --------------------
 
@@ -54,7 +59,6 @@ write sane tests and restructuring.
 
 ### TODO
 
-* Better error messages when something fails
 * Add help and version command line options (`-h/--help` and `-v/--version`)
 * Write to remote log using `tee` (eg: `$ echo SOMETHING 2>&1 |tee logfile`)
 * Extra config YAML options:
