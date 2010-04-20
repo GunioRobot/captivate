@@ -45,7 +45,7 @@ Community
 ---------
 
 * [Source code](http://github.com/zubin/captivate)
-* [Questions?](http://groups.google.com/groups/captivate-rubygem)
+* [Questions?](http://groups.google.com/group/captivate-rubygem)
 
 ### Contributors
 
