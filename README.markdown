@@ -29,7 +29,7 @@ Download and install
 
 ### Install as a gem
 
-    gem install captivate --source http://rubygems.org
+    gem install captivate
 
 ### Configure your rails app
 
@@ -51,33 +51,12 @@ Community
 
 * [Source code](http://github.com/zubin/captivate)
 * [Bugs?](http://github.com/zubin/captivate/issues)
-* [Questions?](http://groups.google.com/group/captivate-rubygem)
 
 ### Contributors
 
 Special thanks goes to [Perryn Fowler](http://github.com/perryn) for helping
 write sane tests and restructuring.
 
-### TODO
-
-* Add help and version command line options (`-h/--help` and `-v/--version`)
-* Write to remote log using `tee` (eg: `$ echo SOMETHING 2>&1 |tee logfile`)
-* Extra config YAML options:
-  * `mailto: [email(s) to receive logile, comma separated]`
-  * `prevent_noncaptivate_deploy: true`
-* Copy sample YAML to config/captivate.yml via `script/generate captivate`
-* Purge previous captivate working directories (older than 1 week?)
-
-### Note on Patches/Pull Requests
-
-* Fork the project.
-* Make your feature addition or bug fix.
-* Add tests for it. This is important so I don't break it in a future version
-  unintentionally.
-* Commit, do not mess with rakefile, version, or history. (if you want to have
-  your own version, that is fine but bump version in a commit by itself I can
-  ignore when I pull)
-* Send me a pull request. Bonus points for topic branches.
 
 ### Copyright
 
