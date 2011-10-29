@@ -16,62 +16,62 @@ describe  Captivate::Command do
     @command = Captivate::Command.new(['some cap commands'])
     File.stub!(:chmod)
   end
-  
+
   it "should pass rails_root and command to config" do
     FileUtils.stub!(:pwd).and_return('path_to_my_app')
     Captivate::Config.should_receive(:new).with(:command => 'some cap commands', :rails_root => 'path_to_my_app')
     @command.invoke
   end
-  
+
   it "should create a remote working directory" do
     Captivate::Config.should_receive(:new).and_return('host' => 'the_host', 'working_path' => 'the_path')
     Captivate::RemoteDir.should_receive(:new).with(:host => 'the_host', :path => 'the_path').and_return(@remote_dir)
     @command.invoke
   end
-  
+
   it "should upload Capfile" do
     @remote_dir.should_receive(:upload).with('Capfile')
     @command.invoke
   end
-  
+
   it "should create a config subdirectory" do
     @remote_dir.should_receive(:new_subdir).with('config')
     @command.invoke
   end
-  
+
   it "should upload deploy.rb to config" do
     @remote_subdir.should_receive(:upload).with('config/deploy.rb')
     @command.invoke
   end
-  
+
   it "shouldn't upload config/deploy if doesn't exist" do
     File.should_receive(:directory?).with('config/deploy').and_return(false)
     @remote_subdir.should_not_receive(:upload).with('config/deploy')
     @command.invoke
   end
-  
+
   it "should upload config/deploy if exists" do
     File.should_receive(:directory?).with('config/deploy').and_return(true)
     @remote_subdir.should_receive(:upload).with('config/deploy')
     @command.invoke
   end
-  
+
   it "should write remote script locally" do
     Captivate::RemoteScript.should_receive(:new).with(:command => 'some cap commands', :remote_path => 'the_path')
     @command.invoke
   end
-  
+
   it "should upload remote script" do
     @remote_script.should_receive(:local_path).and_return('path_to_local_script')
     @remote_dir.should_receive(:upload).with('path_to_local_script', 'captivate-remote.sh')
     @command.invoke
   end
-  
+
   it "should invoke remote script" do
     Captivate::SystemCall.should_receive(:new).with(%{ssh -t the_host screen the_path/captivate-remote.sh})
     @command.invoke
   end
-  
+
   it "should make remote script executable" do
     @remote_script.should_receive(:local_path).and_return('some_path')
     File.should_receive(:chmod).with(0555, 'some_path')
@@ -85,7 +85,7 @@ describe Captivate::Config do
     @config           = Captivate::Config.new(:command => 'some cap commands', :rails_root => @rails_root)
     @yaml_config_path = 'path/to/my_app/config/captivate.yml'
   end
-  
+
   it "should raise an error when 'command' not passed in" do
     lambda do
       Captivate::Config.new(:rails_root => 'the_path').invoke.should
@@ -97,13 +97,13 @@ describe Captivate::Config do
       Captivate::Config.new(:command => 'the_command').invoke.should
     end.should raise_error(Captivate::ConfigError, "Missing 'rails_root' option")
   end
-  
+
   context 'without YAML' do
     it "should raise error" do
       lambda { @config.to_hash }.should raise_error(Captivate::ConfigError, @yaml_config_path)
     end
   end
-  
+
   context 'with YAML' do
     before do
       File.should_receive(:exists?).with(@yaml_config_path).and_return(true)
@@ -117,17 +117,17 @@ describe Captivate::Config do
     it "should return a hash" do
       @config.to_hash.should be_a(Hash)
     end
-    
+
     it "should retrieve host from YAML config, defaulting to production" do
       @config.to_hash['host'].should == 'the_host'
     end
-    
+
     it "should not accept non-production stages if multistage gem not present" do
       @config = Captivate::Config.new(:command => 'staging some cap commands', :rails_root => @rails_root)
       @config.stub!(:deploy_file_contents).and_return('deploy_config')
       @config.to_hash['host'].should == 'the_host'
     end
-    
+
     it "should raise error if multistage gem present but stages not found" do
       @config = Captivate::Config.new(:command => 'staging some cap commands', :rails_root => @rails_root)
       @config.stub!(:deploy_file_contents).and_return(<<-EOS)
@@ -161,17 +161,17 @@ describe Captivate::Config do
       @config = Captivate::Config.new(:command => 'showcase some cap commands', :rails_root => @rails_root)
       @config.to_hash['host'].should == 'the_host'
     end
-  
+
     it "should contain timestamp, app_name, environment, user in remote working directory name" do
       Etc.stub!(:getlogin).and_return('the_user')
       @config.to_hash['working_path'].should == "/tmp/captivate.#{Time.now.to_i}.my_app.production.the_user"
     end
-  
+
     it "should merge YAML config" do
       @config.stub!(:yaml_config).and_return('production' => {'host' => 'the_host', 'working_path' => 'custom_path'})
       @config.to_hash['working_path'].should == 'custom_path'
     end
-  
+
     it "should raise an error if missing config for environment" do
       YAML.stub!(:load_file).with(@yaml_config_path).and_return({})
       lambda do
@@ -192,19 +192,19 @@ describe Captivate::RemoteDir do
   before do
     Captivate::SystemCall.stub!(:new)
   end
-  
+
   it "should create a directory" do
     Captivate::SystemCall.should_receive(:new).with('ssh the_host mkdir the_path')
     Captivate::RemoteDir.new(:host => 'the_host', :path => 'the_path')
   end
-  
+
   it "should raise an error if missing file" do
     @remote_dir = Captivate::RemoteDir.new(:host => 'the_host', :path => 'the_path')
     lambda do
       @remote_dir.upload('local_path/a_file')
     end.should raise_error(Errno::ENOENT, 'No such file or directory - local_path/a_file')
   end
-  
+
   it "should create a subdirectory" do
     @remote_dir = Captivate::RemoteDir.new(:host => 'the_host', :path => 'the_path')
     Captivate::RemoteDir.should_receive(:new).with(:host => 'the_host', :path => 'the_path/a_dir')
@@ -247,7 +247,7 @@ describe Captivate::RemoteScript do
       Captivate::RemoteScript.new(:command => 'some cap commands', :remote_path => 'the_remote_path')
     end
   end
-  
+
   it "should contain cap command in script" do
     @file.should_receive(:write) do |shell_script|
       shell_script.should include('some cap commands')
@@ -261,7 +261,7 @@ describe Captivate::RemoteScript do
     end
     @remote_script.call
   end
-  
+
   it "should return path" do
     @file.should_receive(:path).and_return('some_path')
     @remote_script.call

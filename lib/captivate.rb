@@ -22,21 +22,21 @@ module Captivate
       @remote_dir.upload(remote_script_path, 'captivate-remote.sh')
       SystemCall.new(%{ssh -t #{@host} screen #{@path}/captivate-remote.sh})
     end
-  
+
   private
-    
+
     def self.remote_script_path
       File.join(File.dirname(__FILE__), '/../bin/captivate-remote.sh')
     end
-    
+
     def command
       @args * ' '
     end
-    
+
     def config_options
       {:command => command, :rails_root => rails_root}
     end
-    
+
     def rails_root
       FileUtils.pwd
     end
@@ -47,26 +47,26 @@ module Captivate
       @command    = options[:command]    or raise(ConfigError, "Missing 'command' option")
       @rails_root = options[:rails_root] or raise(ConfigError, "Missing 'rails_root' option")
     end
-    
+
     def to_hash
       validate_yaml_config
       { 'working_path' => working_path }.merge(yaml_config[environment])
     end
-  
+
   private
-    
+
     def working_path
       '/tmp/captivate.%s' % [timestamp, app_name, environment, user].join('.')
     end
-    
+
     def timestamp
       Time.now.to_i
     end
-    
+
     def app_name
       File.basename(@rails_root)
     end
-    
+
     def environment
       if config_stages.include?(commands.first) && multistage_stages.include?(commands.first)
         commands.first
@@ -74,11 +74,11 @@ module Captivate
         'production'
       end
     end
-    
+
     def config_stages
       yaml_config.keys
     end
-    
+
     def multistage_stages
       if multistage?
         set_stages_code = deploy_file_contents[/set :stages,\s?([^\n]+)\n/, 1] or
@@ -88,28 +88,28 @@ module Captivate
         []
       end
     end
-    
+
     def deploy_file_contents
       File.read(deploy_file_path)
     end
-    
+
     def deploy_file_path
       "#{@rails_root}/config/deploy.rb"
     end
-    
+
     def multistage?
       deploy_file_contents.match(%r(\A\s*require (['"])capistrano/ext/multistage\1)) ||
       deploy_file_contents.match(%r(\n\s*require (['"])capistrano/ext/multistage\1))
     end
-    
+
     def commands
       @command.split(/\s+/)
     end
-    
+
     def user
       Etc.getlogin
     end
-    
+
     def validate_yaml_config
       raise(ConfigError, yaml_config_path) unless File.exists?(yaml_config_path)
       raise(ConfigError, "Missing #{environment} environment") unless yaml_config.keys.include?(environment)
@@ -117,11 +117,11 @@ module Captivate
         raise(ConfigError, "Missing 'host' for #{environment} environment")
       end
     end
-    
+
     def yaml_config
       @yaml_config ||= YAML.load_file(yaml_config_path)
     end
-    
+
     def yaml_config_path
       File.join(@rails_root, 'config/captivate.yml')
     end
@@ -132,7 +132,7 @@ module Captivate
       @host, @path = options[:host], options[:path]
       SystemCall.new("ssh #{@host} mkdir #{@path}")
     end
-    
+
     def upload(file_path, dest_filename = file_path)
       raise(Errno::ENOENT, file_path) unless File.exists?(file_path)
       if File.directory?(file_path)
@@ -141,12 +141,12 @@ module Captivate
         SystemCall.new("scp #{file_path} #{@host}:#{@path}/#{File.basename(dest_filename)}")
       end
     end
-    
+
     def new_subdir(dirname)
       self.class.new(:host => @host, :path => "#{@path}/#{dirname}")
     end
   end
-  
+
   class RemoteScript
     attr_reader :local_path, :remote_path, :command
     def initialize(options)
@@ -157,13 +157,13 @@ module Captivate
         f.write(converted_template)
       end
     end
-    
+
   private
-    
+
     def converted_template
       template.gsub('### CAP COMMANDS ###', command).gsub('### REMOTE PATH ###', remote_path)
     end
-    
+
     def template
       <<-EOS
 #!/usr/bin/env bash
@@ -187,13 +187,13 @@ read
       EOS
     end
   end
-  
+
   class SystemCall
     def initialize(command)
       system(command)
     end
   end
-  
+
   class ConfigError < StandardError
   end
 end

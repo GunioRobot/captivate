@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Captivate do
   FIXTURES_PATH = File.expand_path(File.join(File.dirname(__FILE__), '/fixtures'))
-  
+
   before do
     # FIXME: FileUtils.rm_rf isn't deleting.
     # FileUtils.rm_rf('/tmp/captivate*')
@@ -11,7 +11,7 @@ describe Captivate do
     @touched_file_exists = lambda { File.exists?(@file_to_appear) }
     @command             = Captivate::Command.new([%{ROLES=app COMMAND='touch #{@file_to_appear}' invoke}])
   end
-  
+
   context 'when non-multistage rails app' do
     before do
       @rails_root  = File.join(FIXTURES_PATH, 'rails_apps/single_stage')
@@ -37,7 +37,7 @@ describe Captivate do
     before do
       @rails_root  = File.join(FIXTURES_PATH, 'rails_apps/multi_stage')
     end
-    
+
     it "should fail when attempting cap task to nonexistent server" do
       lambda do
         FileUtils.cd(@rails_root)
